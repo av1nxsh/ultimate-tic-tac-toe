@@ -1,8 +1,9 @@
 import numpy as np
 import matplotlib as plt
+
 class inside:
     def __init__(self, x, y, ):
-        self.board = [[0, 0, 0],[0, 0, 0],[0, 0, 0]]
+        self.board = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
         self.x = x
         self.y = y
 
@@ -22,21 +23,23 @@ class inside:
                 return True
         for i in range(3):
             add = board[i][i]
-        if np.reshape(bool_grid, [-1])[::4].sum() == 3:
+        if np.reshape(board, [-1])[::4].sum() == 3:
             return True
-        if np.reshape(bool_grid, [-1])[2:7:2].sum() == 3:
+        if np.reshape(board, [-1])[2:7:2].sum() == 3:
             return True
         return False
-    def move(self,player):
+
+    def move(self, player):
         self.getmoves()
-        if player ==1:
+        if player == 1:
             self.board[self.moves[0][0]][self.moves[0][1]] = 1
         else:
             self.board[self.moves[0][0]][self.moves[0][1]] = 0
-    def printline(self,i):
+
+    def printline(self, i):
         board = self.board
         for j in range(len(board[i])):
-            if (j ==0):
+            if (j == 0):
                 print("| ", end="")
             mark = ' '
             if board[i][j] == 1:
@@ -46,22 +49,20 @@ class inside:
             elif board[i][j] == 0:
                 mark = '*'
             if (j == len(board[i]) - 1):
-                print(str(mark),end='  |  ')
+                print(str(mark), end='  |  ')
             else:
                 print(str(mark) + "|", end='')
 
 
-
-
-
-
 class outside(inside):
-    shell = [[0, 0, 0],[0, 0, 0],[0, 0, 0]]
-    state = np.array([[0, 0, 0],[0, 0, 0],[0, 0, 0]])
+    shell = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+    state = np.array([[0, 0, 0], [0, 0, 0], [0, 0, 0]])
+
     def __init__(self):
         for i in range(len(self.shell)):
             for j in range(len(self.shell[i])):
-                self.shell[i][j] = inside(i,j)
+                self.shell[i][j] = inside(i, j)
+
     def printbox(self):
         print("----------------------------------")
         for i in range(len(self.shell)):
@@ -86,6 +87,7 @@ class outside(inside):
         if np.reshape(board, [-1])[2:7:2].sum() == 3:
             return True
         return False
+
 
 test = outside()
 print(test.printbox())
