@@ -54,7 +54,7 @@ class inside:
                 print(str(mark) + "|", end='')
 
 
-class outside(inside):
+class outside:
     shell = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
     state = np.array([[0, 0, 0], [0, 0, 0], [0, 0, 0]])
 
@@ -69,7 +69,7 @@ class outside(inside):
             for k in range(3):
                 for j in range(len(self.shell[i])):
                     self.shell[i][j].printline(k)
-                print()
+                print("")
             print("----------------------------------")
 
     def win(self):
