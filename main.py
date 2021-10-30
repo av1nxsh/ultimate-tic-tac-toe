@@ -1,33 +1,35 @@
 import numpy as np
 import matplotlib as plt
 
+
+def checkwin(board):
+    for row in board:
+        if row.sum() == 3:
+            return True
+    for row in board.T:
+        if row.sum() == 3:
+            return True
+    for i in range(3):
+        add = board[i][i]
+    if np.reshape(board, [-1])[::4].sum() == 3:
+        return True
+    if np.reshape(board, [-1])[2:7:2].sum() == 3:
+        return True
+    return False
+
+
 class inside:
     def __init__(self, x, y, ):
+        self.moves = []
         self.board = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
         self.x = x
         self.y = y
 
     def getmoves(self):
-        self.moves = []
         for i in range(len(self.board)):
             for j in range(len(self.board[i])):
                 if self.board[i][j] == 0:
                     self.moves.append((i, j))
-
-    def checkwin(self, board):
-        for row in board:
-            if row.sum() == 3:
-                return True
-        for row in board.T:
-            if row.sum() == 3:
-                return True
-        for i in range(3):
-            add = board[i][i]
-        if np.reshape(board, [-1])[::4].sum() == 3:
-            return True
-        if np.reshape(board, [-1])[2:7:2].sum() == 3:
-            return True
-        return False
 
     def move(self, player):
         self.getmoves()
@@ -39,7 +41,7 @@ class inside:
     def printline(self, i):
         board = self.board
         for j in range(len(board[i])):
-            if (j == 0):
+            if j == 0:
                 print("| ", end="")
             mark = ' '
             if board[i][j] == 1:
@@ -48,7 +50,7 @@ class inside:
                 mark = 'O'
             elif board[i][j] == 0:
                 mark = '*'
-            if (j == len(board[i]) - 1):
+            if j == len(board[i]) - 1:
                 print(str(mark), end='  |  ')
             else:
                 print(str(mark) + "|", end='')
