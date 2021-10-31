@@ -19,7 +19,7 @@ def checkwin(board):
 
 
 class inside:
-    def __init__(self, x, y, ):
+    def __init__(self, x, y):
         self.moves = []
         self.board = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
         self.x = x
@@ -41,9 +41,9 @@ class inside:
     def printline(self, i):
         board = self.board
         for j in range(len(board[i])):
+            mark = ' '
             if j == 0:
                 print("| ", end="")
-            mark = ' '
             if board[i][j] == 1:
                 mark = 'X'
             elif board[i][j] == 2:
