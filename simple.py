@@ -93,7 +93,7 @@ class board:
                 pass
 
     def makemove(self, p):
-        move = p.bestmove(self.board)
+        move = p.bestmove(self)
         self.board[move] = p.sign
 
     def showBoard(self):
@@ -117,7 +117,8 @@ class board:
         while not self.end:
             self.makemove(self.computer)
             self.showBoard()
-            self.getwin()
+            if self.getwin():
+                break
             new_hash = self.gethash()
             self.moves.append(new_hash)
             self.makemove(self.human)
@@ -131,8 +132,9 @@ class player:
         self.sign = sign
         self.board_score = {}
 
-    def bestmove(self, current_board, ep=0.3):
-        moves = current_board.getmoves()
+    def bestmove(self, boards, ep=0.3):
+        current_board = boards.board.copy()
+        moves = boards.getmoves()
         move = None
         explore = np.random.uniform(0, 1) < ep
         if explore:
