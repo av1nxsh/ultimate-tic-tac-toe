@@ -12,6 +12,7 @@ from typing import Dict, Any
 """
 
 import numpy as np
+import time
 
 
 def getHash(boards):
@@ -22,6 +23,11 @@ def getHash(boards):
 class board:
     def __init__(self, computer, human):
         self.board = np.zeros((3, 3))
+        """self.board = [
+            [1, -1, 1],
+            [-1, 1, 1],
+            [1, -1, 0]
+        ]"""
         self.hash = None
         self.end = False
         self.computer = computer
@@ -50,6 +56,7 @@ class board:
         """
 
         sign = ''
+        moves = self.getmoves()
         if not self.end:
             """checking row"""
             for x, row in enumerate(self.board):
@@ -73,9 +80,9 @@ class board:
                 self.end = True
 
             """checking for draw"""
-            if self.getmoves() is None:
-                sign = 0
+            if not moves:
                 self.end = True
+                return 0.5
 
         if not self.end:
             return False
@@ -94,7 +101,8 @@ class board:
 
     def makemove(self, p):
         move = p.bestmove(self)
-        self.board[move] = p.sign
+        if move:
+            self.board[move] = p.sign
 
     def showBoard(self):
         # p1: x  p2: o
@@ -113,17 +121,38 @@ class board:
             print(out)
         print('-------------')
 
+    def test(self):
+        self.board = np.array([
+            [1, -1, 1],
+            [-1, 1, 1],
+            [1, -1, -1]
+        ])
+        print(self.getwin())
+
     def start(self):
-        while not self.end:
-            self.makemove(self.computer)
-            self.showBoard()
-            if self.getwin():
-                break
-            new_hash = self.gethash()
-            self.moves.append(new_hash)
-            self.makemove(self.human)
-            self.getwin()
-            self.showBoard()
+        for i in range(10):
+            while not self.end:
+                # self.showBoard()
+                self.makemove(self.computer)
+                # self.showBoard()
+                win = self.getwin()
+                if win:
+                    if win != 0.5:
+                        print(win)
+                    else:
+                        print(0)
+                    break
+                new_hash = self.gethash()
+                self.moves.append(new_hash)
+                self.makemove(self.human)
+                self.getwin()
+                # self.showBoard()
+                win = self.getwin()
+                if win:
+                    print(win)
+                    break
+            self.board = np.zeros((3, 3))
+            self.end = False
 
 
 class player:
@@ -137,23 +166,25 @@ class player:
         moves = boards.getmoves()
         move = None
         explore = np.random.uniform(0, 1) < ep
-        if explore:
+        if explore and len(moves) != 0:
             move = moves[(np.random.randint(0, len(moves)))]
         else:
             max_reward = -10
-            for m in moves:
-                new_board = current_board.copy()
-                new_board[m] = 1
-                hash_str = str(new_board.reshape(9))
-                if self.board_score.get(hash_str) is None:
-                    reward = 0
-                else:
-                    reward = self.board_score.get(hash_str)
-                if max_reward < reward:
-                    max_reward = reward
-                    move = m
+            if len(moves) != 0:
+                for m in moves:
+                    new_board = current_board.copy()
+                    new_board[m] = 1
+                    hash_str = str(new_board.reshape(9))
+                    if self.board_score.get(hash_str) is None:
+                        reward = 0
+                    else:
+                        reward = self.board_score.get(hash_str)
+                    if max_reward < reward:
+                        max_reward = reward
+                        move = m
         current_board[move] = self.sign
         return move
+
 
 computer = player(1)
 human = player(-1)
