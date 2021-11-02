@@ -150,6 +150,7 @@ class board:
                 win = self.getwin()
                 if win:
                     print(win)
+                    print()
                     break
             self.board = np.zeros((3, 3))
             self.end = False
