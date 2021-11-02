@@ -52,7 +52,7 @@ class board:
         ongoing = false
         # win = 1
         # loss = -1
-        # draw = 0
+        # draw = 0.5
         """
 
         sign = ''
@@ -60,24 +60,36 @@ class board:
         if not self.end:
             """checking row"""
             for x, row in enumerate(self.board):
-                if row[0] == row[1] == row[2] != 0:
-                    sign = row[0]
+                if sum(row) == 3:
                     self.end = True
+                    return 1
+                if sum(row) == -3:
+                    self.end = True
+                    return 1
+
 
             """checking col"""
             temp_board = self.board.T.copy()
             for x, col in enumerate(temp_board):
-                if col[0] == col[1] == col[2] != 0:
-                    sign = col[0]
+                if sum(col) == 3:
                     self.end = True
-
+                    return 1
+                if sum(col) == -3:
+                    self.end = True
+                    return 1
             """checking diagonals"""
-            if self.board[0][0] == self.board[1][1] == self.board[2][2] != 0:
-                sign = self.board[1][1]
+            if self.board[0][0] + self.board[1][1] + self.board[2][2] == 3:
                 self.end = True
-            if self.board[0][2] == self.board[1][1] == self.board[2][0] != 0:
-                sign = self.board[1][1]
+                return 1
+            if self.board[0][0] + self.board[1][1] + self.board[2][2] == -3:
                 self.end = True
+                return -1
+            if self.board[0][2] + self.board[1][1] + self.board[2][0] == 3:
+                self.end = True
+                return 1
+            if self.board[0][2] + self.board[1][1] + self.board[2][0] == -3:
+                self.end = True
+                return -1
 
             """checking for draw"""
             if not moves:
@@ -86,18 +98,8 @@ class board:
 
         if not self.end:
             return False
-        if self.end:
-            return 1 if sign == self.computer.sign else -1
 
-    def giverewards(self, p):
-        winner = self.getwin()
-        if winner:
-            if winner == 1:
-                pass
-            elif winner == 0:
-                pass
-            elif winner == -1:
-                pass
+
 
     def makemove(self, p):
         move = p.bestmove(self)
@@ -121,20 +123,22 @@ class board:
             print(out)
         print('-------------')
 
-    def test(self):
-        self.board = np.array([
-            [1, -1, 1],
-            [-1, 1, 1],
-            [1, -1, -1]
-        ])
-        print(self.getwin())
+    def giverewards(self, comp):
+        winner = self.getwin()
+        for h in self.moves:
+            comp.rewards(h, winner)
+            # give rewards
 
     def start(self):
         for i in range(10):
             while not self.end:
-                # self.showBoard()
+                self.showBoard()
+                new_hash = self.gethash()
+                print(new_hash)
                 self.makemove(self.computer)
-                # self.showBoard()
+                self.showBoard()
+                new_hash = self.gethash()
+                print(new_hash)
                 win = self.getwin()
                 if win:
                     if win != 0.5:
@@ -146,14 +150,10 @@ class board:
                 self.moves.append(new_hash)
                 self.makemove(self.human)
                 self.getwin()
-                # self.showBoard()
                 win = self.getwin()
                 if win:
                     print(win)
                     print()
-                    break
-            self.board = np.zeros((3, 3))
-            self.end = False
 
 
 class player:
@@ -185,6 +185,17 @@ class player:
                         move = m
         current_board[move] = self.sign
         return move
+
+    def gethash(self, board):
+        hash_board = str(board.reshape(9))
+        return hash_board
+
+    def rewards(self, hash_str, reward):
+        al = 0.4  # alpha value
+        df = 0.3  # discount factor
+        if self.board_score.get(hash_str) is None:
+            self.board_score[hash_str] = 0
+        self.board_score[hash_str] += al * (reward + self.board_score[hash_str] * (df + 1))
 
 
 computer = player(1)
