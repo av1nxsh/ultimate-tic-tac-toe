@@ -92,4 +92,4 @@ class outside:
 
 
 test = outside()
-print(test.printbox())
+test.printbox()
