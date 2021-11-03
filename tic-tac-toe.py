@@ -273,21 +273,28 @@ class HumanPlayer:
 
 
 if __name__ == "__main__":
-    # training
+    """    # training
     p1 = Player("p1")
     p2 = Player("p2")
 
     st = State(p1, p2)
     print("training...")
-    st.play(1000)
+    st.play(1000)"""
 
     # play with human
+
     p1 = Player("computer", exp_rate=0)
     p1.savePolicy()
-    p1.loadPolicy("policy_computer")
+    p1.loadPolicy("policy_p1")
 
     p2 = HumanPlayer("human")
 
     st = State(p1, p2)
+    sim = np.array([
+        [0, 0, 0],
+        [0, 1, 0],
+        [0, 0, 0]
+    ])
+    sim_re = str(np.reshape(sim, 9))
     print(p1.states_value)
-    st.play2()
+    # st.play2()
